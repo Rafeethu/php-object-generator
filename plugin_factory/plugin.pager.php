@@ -4,15 +4,17 @@ class pager
 	var $sourceObject;
 	var $argv;
 	var $version = '0.1';
-
+	
 	private $total_records;
 	private $start = 0;
 	private $limit = 50;
 	private $pages;
-    private $thispage =1;
+	private $thispage =1;
 	private $objectlist = null;
-    private $pg;
-    private $obj;
+    	private $pg;
+    	private $obj;
+    	private $sortby='';
+    	private $sort_asc = true;
 	function Version()
 	{
 		return $this->version;
@@ -28,6 +30,10 @@ class pager
 				$this->thispage = $fcv_array[1];                
 				$this->limit = $fcv_array[2];
 			}
+			if (sizeof($fcv_array) > 3)
+				$this->sortby = $fcv_array[3];
+			if (sizeof($fcv_array) > 4)
+				$this->sort_asc = $fcv_array[4];
 		}
         if($this->thispage<=0){
             $this->thispage = 1;
@@ -52,6 +58,14 @@ class pager
 		return $this->total_records;
 	}
 	
+	function get_page_description(){
+		$from = $this->start + 1;
+		$to = $from + $this->limit-1;
+		if($this->total_records<$to)
+			$to = $this->total_records;
+		return ('Showing '.$from.' to '.$to.' of '.$this->total_records.' entries');
+	}
+
 	function getCurrentPage(){
 		return $this->thispage;
 	}
@@ -83,7 +97,7 @@ class pager
 		}
 		$pg = $this->start.','.$this->limit;
 		eval('$this->obj = new $objectName();');
-		$this->objectlist = $this->obj->GetList($fcv_array,'',true,$pg);
+		$this->objectlist = $this->obj->GetList($fcv_array,$this->sortby,$this->sort_asc,$pg);
 		return $this->objectlist;
 	}
 	
@@ -243,11 +257,6 @@ class pager
 				return true;
 			}
 			return false;
-
 		}
-
-		//test w/ arguments
-
-
 	}
 }
