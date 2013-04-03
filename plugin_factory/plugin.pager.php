@@ -58,7 +58,7 @@ class pager
 		return $this->total_records;
 	}
 	
-	function get_page_description(){
+	function getPageDescription(){
 		$from = $this->start + 1;
 		$to = $from + $this->limit-1;
 		if($this->total_records<$to)
